@@ -6,7 +6,7 @@ Created on Sat Jan 21 15:59:27 2012
 @author: flam
 """
 
-from configobj import ConfigObj
+#from configobj import ConfigObj
 import xml.etree.ElementTree as xml
 import random as rd
 import copy
@@ -32,7 +32,7 @@ depthmaxsearch=5
 
 def get_random_defykub(sx=20,sy=10,nbwall=30,nbtarg=2,nbmob=2,nbactions=20,seed=0):
     res=defykub()
-    #seed=3
+    #seed=4
     if seed:
         rd.seed(seed)
     
@@ -60,8 +60,8 @@ def get_random_defykub(sx=20,sy=10,nbwall=30,nbtarg=2,nbmob=2,nbactions=20,seed=
                 if res.potential_start(i,j):
                     lst.append((i,j))
                     depth.append(res.depth_cell_min(i,j,depthmaxsearch))
-        print "lst:",lst
-        print "depth:",depth                    
+        #print "lst:",lst
+        #print "depth:",depth                    
 
         # handle lack of places
         if len(lst)<nbtarg:
@@ -72,14 +72,15 @@ def get_random_defykub(sx=20,sy=10,nbwall=30,nbtarg=2,nbmob=2,nbactions=20,seed=
         while res.nbtarg<nbtarg:
             #t=rd.randint(0,len(lst)-1)
             t,dtemp=max(enumerate(depth),key=itemgetter(1))
-            print "dtemp:",dtemp
+            #print "dtemp:",dtemp
             x,y=lst.pop(t)
             depth.pop(t)
-            res.board[x][y]=b_val
-            res.targs.append((x,y))
-            res.nbtarg+=1
-            res.mobs.append((x,y))
-            res.nbmob+=1
+            if res.potential_start(x,y):               
+                res.board[x][y]=b_val
+                res.targs.append((x,y))
+                res.nbtarg+=1
+                res.mobs.append((x,y))
+                res.nbmob+=1
             
 #            depth=list()
 #            for i,j in lst:
@@ -110,7 +111,7 @@ def get_random_defykub(sx=20,sy=10,nbwall=30,nbtarg=2,nbmob=2,nbactions=20,seed=
         forbidendir=[5 for i in range(res.nbmob)] 
         
         nbmoving=res.nbmob
-        print nbactions
+        #print nbactions
         
         while len(res.cactions)<nbactions:
             sel=0
@@ -120,8 +121,8 @@ def get_random_defykub(sx=20,sy=10,nbwall=30,nbtarg=2,nbmob=2,nbactions=20,seed=
             ind=[i for i, e in enumerate(moving) if e != 0]
             sel=ind[tmp]
             
-            print "sel:",sel
-            print moving
+            #print "sel:",sel
+            #print moving
             
             i,j=res.mobs[sel]            
             
@@ -133,26 +134,23 @@ def get_random_defykub(sx=20,sy=10,nbwall=30,nbtarg=2,nbmob=2,nbactions=20,seed=
             
             dinv=d+2 % 4
             
-            print "d:",d
-                        
-            lst=list()
-            lst0=list()
+            #print "d:",d
             
             # list possible  spaces for continuing or stop (lst0)
             lst,lst0=res.list_cells_in_dir(i,j,d)
-            print "lst:",lst
-            print "lst0:",lst0
-            print res.potential_start_dir(i,j,d)
+            #print "lst:",lst
+            #print "lst0:",lst0
+            
             
             
             
             # select and move mobile
             if len(lst):
-                print "encours"
+                #print "encours"
                 t=rd.randint(0,len(lst)-1)
                 res.mobs[sel]=lst[t]               
             else:
-                print "stop"
+                #print "stop"
                 if len(lst0)>1:
                     t=rd.randint(0,len(lst0)-1)
                 else: 
@@ -169,9 +167,9 @@ def get_random_defykub(sx=20,sy=10,nbwall=30,nbtarg=2,nbmob=2,nbactions=20,seed=
             # check if targets are alone now
             res.update_board()
 
-            print res.mobs
-            print res.targs
-            res.print_board()  
+            #print res.mobs
+            #print res.targs
+            #res.print_board()  
             
             test=0
             for temp in moving:
@@ -179,11 +177,6 @@ def get_random_defykub(sx=20,sy=10,nbwall=30,nbtarg=2,nbmob=2,nbactions=20,seed=
             if not test:
                 break
             
-            
-                  
- 
-        
-
     # init defykub
     res.sx=sx
     res.sy=sy 
@@ -200,6 +193,7 @@ def get_random_defykub(sx=20,sy=10,nbwall=30,nbtarg=2,nbmob=2,nbactions=20,seed=
     res.clean_done()
     rd.shuffle(res.mobs)
     
+    res.complexity=len(res.cactions)
     
     res.defy0=copy.deepcopy(res)
     
@@ -231,6 +225,11 @@ class defykub:
         
         self.board=[]
         self.old=b_void
+        
+        self.complexity=0
+        self.cactions=list()
+        self.sactions=list()
+        
         
         self.nb_actions=0
         self.actions=list()
@@ -391,13 +390,14 @@ class defykub:
             i,j=self.next_cell(i,j,d)
             if self.potential_start_dir(i,j,d):
                 lst.append((i,j))
-            lst0.append((i,j))
+            if self.safe_board(i,j)==b_void:
+                lst0.append((i,j))
         return lst,lst0
 
     def potential_start_dir(self,i,j,d):
         d=(d+1) % 4
         d2=(d+2) % 4
-        return self.passing_neighboor(i,j,d) ^ self.passing_neighboor(i,j,d2)
+        return self.board[i][j]==b_void and(self.passing_neighboor(i,j,d) ^ self.passing_neighboor(i,j,d2))
     
     def potential_dir(self,i,j,forbid=4):
         if self.passing_cell(self.safe_board_pos(self.next_cell(i,j,d_up))) and not self.passing_cell(self.safe_board_pos(self. next_cell(i,j,d_down))) and not forbid==d_up:

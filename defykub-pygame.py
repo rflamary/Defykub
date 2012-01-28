@@ -20,7 +20,7 @@ imglist=['void.png',
          'val.png',
          'mobsel.png']
          
-param_random={'sx':25,
+param_random={'sx':20,
               'sy':20,
               'nbwall':50,
               'nbtarg':3,
@@ -65,16 +65,21 @@ class TopControl(gui.Table):
         self.td(self.menubut,colspan=2)
         
         self.newbut=gui.Button("New")
-        self.newbut.connect(gui.CLICK, click_button,action_new )
+        
         self.td(self.newbut,colspan=2)
 
         self.resbut=gui.Button("Reset")
         
         self.td(self.resbut,colspan=2)
         
-        self.td(gui.Label("      Defykub",color=fg),colspan=2)
-
         
+        self.lblcomp=gui.Label("   Complexity: ",color=fg)      
+        
+        self.td(self.lblcomp,colspan=2)
+
+        self.lblnbact=gui.Label("   Nb actions: ",color=fg)      
+        
+        self.td(self.lblnbact,colspan=2)        
 
 
 class game():
@@ -98,6 +103,7 @@ class game():
 #        self.load_from_file('test.xml')
 
         #set start loop to menu
+        self.loop=l_play
         
 
         self.imgs= load_images()  
@@ -106,15 +112,29 @@ class game():
         pygame.display.set_caption("Defykub")
         self.form = gui.Form()
 
-        self.app = gui.App()
-        self.ctl = TopControl()
-        
+        self.tbar = gui.App()
+        self.tbarctl = TopControl()
+        # new button
+        self.tbarctl.newbut.connect(gui.CLICK,self.generate_new)
+        # reset button
+        self.tbarctl.resbut.connect(gui.CLICK,self.reset_level)   
         
         
         self.c = gui.Container(align=-1,valign=-1)
-        self.c.add(self.ctl,0,0)
+        self.c.add(self.tbarctl,0,0)
         
-        self.app.init(self.c)
+        self.tbar.init(self.c)
+        
+    def change_loop(self,new):
+        self.loop=new
+        
+    def generate_new(self):
+        self.sel=0
+        self.defy=get_random_defykub(**param_random) 
+        
+    def reset_level(self):
+        self.defy=self.defy.defy0
+        self.defy.defy0=copy.deepcopy(self.defy)        
         
     def load_from_file(self,fname):
         self.defy.from_file(fname)
@@ -135,6 +155,9 @@ class game():
         sx=self.defy.sx
         sy=self.defy.sy
         csize=self.csize
+        
+        self.tbarctl.lblcomp.set_text("   Compexity: "+str(self.defy.complexity))
+        self.tbarctl.lblnbact.set_text("   Nb actions: "+str(self.defy.nb_actions))
         
         for i in range(sx+2):
             rec=pygame.Rect((self.startx+i*csize,self.starty),(csize,csize))
@@ -176,11 +199,9 @@ class game():
                 elif e.type is KEYDOWN and e.key == action_next: 
                     self.sel=(self.sel+1) % self.defy.nbmob
                 elif e.type is KEYDOWN and e.key == action_reset: 
-                    self.defy=self.defy.defy0
-                    self.defy.defy0=copy.deepcopy(self.defy)
+                    self.reset_level()
                 elif e.type is KEYDOWN and e.key == action_new: 
-                    self.sel=0
-                    self.defy=get_random_defykub(**param_random)   
+                    self.generate_new()   
                 elif e.type is KEYDOWN and e.key == K_RIGHT: 
                     self.play_action(self.sel,d_right) 
                 elif e.type is KEYDOWN and e.key == K_DOWN: 
@@ -190,10 +211,10 @@ class game():
                 elif e.type is KEYDOWN and e.key == K_UP: 
                     self.play_action(self.sel,d_up) 
                 else:
-                    self.app.event(e)
+                    self.tbar.event(e)
             self.screen.fill((0,0,0))
             self.print_board()
-            self.app.paint()
+            self.tbar.paint()
             pygame.display.flip()
             
             if self.defy.finished():
