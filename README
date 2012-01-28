@@ -1,0 +1,8 @@
+Defikub is a puzzle game similar to Ricochet Robots. The aim is to move mobile on a board to put them on targets. Once a mobile moves in a direction it can be stopped only by another obot ao a wall.
+
+Keys:
+
+left,right,up,down 	: move selected robot
+g			: generate a new random level
+r			: reset levl to original configuration
+Esc,q			: quit game		
