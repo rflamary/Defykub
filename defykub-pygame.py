@@ -80,6 +80,8 @@ class TopControl(gui.Table):
         self.lblnbact=gui.Label("   Nb actions: ",color=fg)      
         
         self.td(self.lblnbact,colspan=2)        
+        
+
 
 
 class game():
