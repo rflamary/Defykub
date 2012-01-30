@@ -3,6 +3,8 @@
 from distutils.core import setup
 import os
 
+# debian cmd: python setup.py --command-packages=stdeb.command bdist_deb
+
 ROOT = os.path.abspath(os.path.dirname(__file__))
 README = open(os.path.join(ROOT, 'README')).read()
 
@@ -18,4 +20,18 @@ setup(name='Defykub',
       license = 'GPL',
       packages=['pgu'],
       requires=["pygame (>=0.1.9)"],
+    classifiers=[
+        'Development Status :: 3 - Alpha',
+     'Environment :: Win32 (MS Windows)',
+        'Environment :: X11 Applications',
+        'Environment :: MacOS X',
+        'License :: OSI Approved :: GNU General Public License (GPL)',
+        'Natural Language :: English',
+        'Operating System :: MacOS',
+        'Operating System :: Microsoft :: Windows',
+        'Operating System :: POSIX :: Linux',
+        'Programming Language :: Python'
+        'Topic :: Games/Entertainment :: Puzzle Games'
+    ]                
+              
      )
