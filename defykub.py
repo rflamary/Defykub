@@ -82,9 +82,9 @@ def get_random_defykub(sx=20,sy=10,nbwall=30,nbtarg=2,nbmob=2,nbactions=20,seed=
                 res.mobs.append((x,y))
                 res.nbmob+=1
             
-#            depth=list()
-#            for i,j in lst:
-#                depth.append(res.depth_cell_min(i,j,depthmaxsearch))
+            #depth=list()
+            #for i,j in lst:
+            #    depth.append(res.depth_cell_min(i,j,depthmaxsearch))
         
         lst=list()
         
@@ -344,12 +344,13 @@ class defykub:
             return self.board[i][j]
             
     def depth_cell_min(self,i,j,depthmax):
+        #print depthmax
         if depthmax<=0:
             return 0
         else:
             lst,lst0=self.list_cells_in_dir(i,j,self.potential_dir(i,j))
             if not len(lst):
-                return 1
+                return 0
             else:
                 depth=list()
                 for i,j in lst:

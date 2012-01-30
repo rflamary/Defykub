@@ -6,4 +6,10 @@ left,right,up,down 	: move selected robot
 space			: change selected robot (selected is in green)
 g			: generate a new random level
 r			: reset levl to original configuration
-Esc,q			: quit game		
+Esc,q			: quit game	
+
+Play:
+
+execute defykub-pygame.py
+
+	
