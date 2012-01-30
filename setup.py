@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+# -*- coding: utf-8 -*-
 from distutils.core import setup
 import os
 
@@ -15,11 +15,13 @@ setup(name='Defykub',
       author=u'Rémi Flamary',
       author_email='remi.flamary@gmail.com',
       url='https://github.com/flam157/Defykub/',
-      py_modules=['defykub','defykub-pygame'],
+      py_modules=['defykub','defykubpygame'],
       scripts=['scripts/defykub'],
       license = 'GPL',
-      packages=['pgu'],
+      packages=['pgu','pgu/gui'],
       requires=["pygame (>=0.1.9)"],
+        package_data={'pgu': ['imgs/*.png', 'data/*']},
+    include_package_data=True,
     classifiers=[
         'Development Status :: 3 - Alpha',
      'Environment :: Win32 (MS Windows)',
