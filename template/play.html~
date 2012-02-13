@@ -44,11 +44,78 @@ p.infolinks { margin: 0.5em 0em 0em 0em; padding: 0px; }
 	tr[id]::before { content: attr(id); display: table-cell; border: 1px gray solid; padding: 0.5em; vertical-align: top; font-style: italic; }
 }
 </style>
+<script type="text/javascript">
+function post_to_url(path, params, method) {
+    method = method || "post"; // Set method to post by default, if not specified.
+
+    // The rest of this code assumes you are not using a library.
+    // It can be made less wordy if you use one.
+    var form = document.createElement("form");
+    form.setAttribute("method", method);
+    form.setAttribute("action", path);
+
+    for(var key in params) {
+        var hiddenField = document.createElement("input");
+        hiddenField.setAttribute("type", "hidden");
+        hiddenField.setAttribute("name", key);
+        hiddenField.setAttribute("value", params[key]);
+
+        form.appendChild(hiddenField);
+    }
+
+    document.body.appendChild(form);
+    form.submit();
+}
+document.onkeydown=function(e){
+ var e=window.event || e
+ if (e.keyCode==39)
+{post_to_url('/play/',{'action':'right'})}
+ if (e.keyCode==37)
+{post_to_url('/play/',{'action':'left'})}
+ if (e.keyCode==40)
+{post_to_url('/play/',{'action':'down'})}
+ if (e.keyCode==38)
+{post_to_url('/play/',{'action':'right'})}
+
+}
+document.onkeypress=function(e){
+ var e=window.event || e
+ if (String.fromCharCode(e.charCode)=='n')
+{post_to_url('/play/',{'action':'new'})}
+ if (String.fromCharCode(e.charCode)==' ')
+{post_to_url('/play/',{'action':'switch'})}
+ if (String.fromCharCode(e.charCode)=='r')
+{post_to_url('/play/',{'action':'reset'})}
+}
+</script>
 </head>
 <body>
 <h1> Defykub </h1> 
-   <a href="play/">Play</a>
+   <a href="/">Home</a>
    <a href="{{ login }}">{{ login_text }}</a>
+
+
+<p>
+ {{ game }}
+</p>
+<form name="new" action="/play/?action=new" method="post">
+<input type="submit" value="New" />
+</form>
+<form name="reset" action="/play/?action=reset" method="post">
+<input type="submit" value="Reset" />
+</form>
+<form name="left" action="/play/?action=left" method="post">
+<input type="submit" value="Left" />
+</form>
+<form name="right" action="/play/?action=right" method="post">
+<input type="submit" value="Right" />
+</form>
+<form name="up" action="/play/?action=up" method="post">
+<input type="submit" value="Up" />
+</form>
+<form name="right" action="/play/?action=down" method="post">
+<input type="submit" value="Down" />
+</form>
 
 <p>
  <small>Created by Defykub</small>

@@ -47,7 +47,7 @@ p.infolinks { margin: 0.5em 0em 0em 0em; padding: 0px; }
 </head>
 <body>
 <h1> Defykub </h1> 
-   <a href="play/">Play</a>
+   <a href="play">Play</a>
    <a href="{{ login }}">{{ login_text }}</a>
 
 <p>
