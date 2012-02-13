@@ -5,7 +5,7 @@ import os
 import defykub
 from google.appengine.api import users
 from google.appengine.ext import db
-
+import datetime
 
 svgw=20;
 
@@ -26,6 +26,12 @@ class PlayDB(db.Model):
     selected = db.IntegerProperty()
     nbactions = db.IntegerProperty()
     date_start = db.DateTimeProperty(auto_now_add=True)  
+    
+class OptionsDB(db.Model):
+    user = db.UserProperty()
+    sx = db.IntegerProperty()
+    sy = db.IntegerProperty()
+    nbactions = db.IntegerProperty() 
     
 def game_key(game_name=None):
   """Constructs a datastore key for a Guestbook entity with guestbook_name."""
@@ -118,7 +124,9 @@ class Play(webapp2.RequestHandler):
             'title': 'Defykub Play',
             'login': login,
             'login_text': login_text,
-            'game': defy.get_svg(game.selected)
+            'game': defy.get_svg(game.selected),
+            'nbactions': game.nbactions,
+            'timespent': str(datetime.datetime.now()-game.date_start)
             }   
             template = jinja_environment.get_template('play.html')
             self.response.out.write(template.render(template_values))
@@ -214,7 +222,8 @@ class Play(webapp2.RequestHandler):
                 game.game=defy.to_string()
                 game.nbactions+=1
                 
-                game.put()                 
+                game.put()      
+                
             elif action=='reset':
                 
                 game=game.get()
@@ -222,6 +231,7 @@ class Play(webapp2.RequestHandler):
                 defy.from_string(game.game0)
                 
                 game.game=game.game0
+                game.nbactions=0
    
                 game.put()    
                 
@@ -240,7 +250,9 @@ class Play(webapp2.RequestHandler):
             'title': 'Defykub Play',
             'login': login,
             'login_text': login_text,
-            'game': defy.get_svg(game.selected)
+            'game': defy.get_svg(game.selected),
+            'nbactions': game.nbactions,
+            'timespent': str(datetime.datetime.now()-game.date_start)
             }   
             template = jinja_environment.get_template('play.html')
             self.response.out.write(template.render(template_values))

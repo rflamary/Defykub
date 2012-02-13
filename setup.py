@@ -20,7 +20,7 @@ setup(name='Defykub',
       license = 'GPL',
       packages=['pgu','pgu/gui'],
       requires=["pygame (>=0.1.9)"],
-        package_data={'pgu': ['imgs/*.png', 'data/*']},
+    package_data={'pgu': ['imgs/*.png', 'data/*']},
     include_package_data=True,
     classifiers=[
         'Development Status :: 3 - Alpha',

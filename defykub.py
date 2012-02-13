@@ -27,6 +27,14 @@ d_left=3
 
 charboard=[' ','#','O','X','V','0']
 
+svg_styles=['fill:white;stroke:black;stroke-width:1',
+            'fill:#A05A2C;stroke:black;stroke-width:1',
+            'fill:#0000FF;stroke:black;stroke-width:1',
+            'fill:#FF0000;stroke:black;stroke-width:1',
+            'fill:#FF6600;stroke:black;stroke-width:1',
+            'fill:#00FF00;stroke:black;stroke-width:1',
+            ]
+
 depthmaxsearch=5
 
 
@@ -234,9 +242,11 @@ class defykub:
         self.nb_actions=0
         self.actions=list()
         
-            
-    def from_file(self,fname):
-        level = xml.parse(fname)
+        self.svgw=30
+        
+    def from_string(self,string):
+        
+        level = xml.fromstring(string)
         self.level=level
         
         self.name=level.find('header').find('title').text
@@ -250,6 +260,7 @@ class defykub:
         self.nbmob=0
         self.nbtarg=0
         self.nbwall=0
+        self.nbval=0
         
         for item in level.findall("description/mobs/m"):
             x=item.attrib['x']
@@ -272,6 +283,61 @@ class defykub:
             self.board[int(x)][int(y)]=b_wall
             self.walls.append((int(x),int(y)))
             self.nbwall+=1    
+            
+        for item in level.findall("description/vals/v"):
+            x=item.attrib['x']
+            y=item.attrib['y']
+            self.board[int(x)][int(y)]=b_val
+            self.vals.append((int(x),int(y)))
+            self.nbval+=1               
+        
+        self.defy0=copy.deepcopy(self)
+            
+    def from_file(self,fname):
+        level = xml.parse(fname)
+        self.level=level
+        
+        self.name=level.find('header').find('title').text
+        self.author=level.find('header').find('author').text
+        
+        self.sx=int(level.find('description').attrib['sx'])
+        self.sy=int(level.find('description').attrib['sy'])
+        
+        self.board= [[b_void for i in range(self.sy)] for j in range(self.sx)]
+        
+        self.nbmob=0
+        self.nbtarg=0
+        self.nbwall=0
+        self.nbval=0
+        
+        for item in level.findall("description/mobs/m"):
+            x=item.attrib['x']
+            y=item.attrib['y']
+            self.board[int(x)][int(y)]=b_mob
+            self.mobs.append((int(x),int(y)))
+            self.nbmob+=1   
+
+            
+        for item in level.findall("description/targs/t"):
+            x=item.attrib['x']
+            y=item.attrib['y']
+            self.board[int(x)][int(y)]=b_targ
+            self.targs.append((int(x),int(y)))
+            self.nbtarg+=1
+            
+        for item in level.findall("description/walls/w"):
+            x=item.attrib['x']
+            y=item.attrib['y']
+            self.board[int(x)][int(y)]=b_wall
+            self.walls.append((int(x),int(y)))
+            self.nbwall+=1    
+
+        for item in level.findall("description/vals/v"):
+            x=item.attrib['x']
+            y=item.attrib['y']
+            self.board[int(x)][int(y)]=b_val
+            self.vals.append((int(x),int(y)))
+            self.nbval+=1         
         
         self.defy0=copy.deepcopy(self)
         
@@ -297,8 +363,8 @@ class defykub:
             if isupon:
                 i,j=targ
                 self.board[i][j]=b_val
-            
-    def to_file(self,fname):
+                
+    def to_xml(self,selected=0):
         
         level = xml.Element('level')
         
@@ -323,11 +389,60 @@ class defykub:
         xtargs=xml.SubElement(desc, "targs")
         for x,y in self.targs:
             xml.SubElement(xtargs, "t",x=str(x),y=str(y))
+
+        xvals=xml.SubElement(desc, "vals")
+        for x,y in self.vals:
+            xml.SubElement(xvals, "v",x=str(x),y=str(y))
+        
+        return level
+            
+    def to_string(self):
+        
+        temp= self.to_xml()
+        return xml.tostring(temp)
+            
+    def to_file(self,fname):
+        
+        level=self.to_xml()
             
         self.level=level
         
         file = open(fname,'w')
         xml.ElementTree(level).write(file)
+        
+    def get_svg(self,selected=0):
+        
+        svg = xml.Element('svg',xmlns="http://www.w3.org/2000/svg",version="1.1",width=str(self.svgw*(self.sx+2)),height=str(self.svgw*(self.sy+2)))
+        
+        for x in range(self.sx+2):
+            xml.SubElement(svg, "rect",x=str(x*self.svgw),y=str(0),width=str(self.svgw),height=str(self.svgw),style=svg_styles[b_wall])
+            xml.SubElement(svg, "rect",x=str(x*self.svgw),y=str((self.sy+1)*self.svgw),width=str(self.svgw),height=str(self.svgw),style=svg_styles[b_wall])
+
+        for y in range(self.sy+2):
+            xml.SubElement(svg, "rect",x=str(0),y=str(y*self.svgw),width=str(self.svgw),height=str(self.svgw),style=svg_styles[b_wall])
+            xml.SubElement(svg, "rect",x=str((self.sx+1)*self.svgw),y=str((y)*self.svgw),width=str(self.svgw),height=str(self.svgw),style=svg_styles[b_wall])
+            
+        for x in range(self.sx):
+            for y in range(self.sy):
+                xml.SubElement(svg, "rect",x=str((x+1)*self.svgw),y=str((y+1)*self.svgw),width=str(self.svgw),height=str(self.svgw),style=svg_styles[b_void])
+                
+        for x,y in self.walls:
+            xml.SubElement(svg, "rect",x=str((x+1)*self.svgw),y=str((y+1)*self.svgw),width=str(self.svgw),height=str(self.svgw),style=svg_styles[b_wall])
+
+        for x,y in self.mobs:
+            xml.SubElement(svg, "circle",cx=str((x+1)*self.svgw+self.svgw/2),cy=str((y+1)*self.svgw+self.svgw/2),r=str(self.svgw/2),style=svg_styles[b_mob])
+            
+        for x,y in self.targs:
+            xml.SubElement(svg, "rect",x=str((x+1)*self.svgw),y=str((y+1)*self.svgw),width=str(self.svgw),height=str(self.svgw),style=svg_styles[b_targ])
+
+        for x,y in self.vals:
+            xml.SubElement(svg, "rect",x=str((x+1)*self.svgw),y=str((y+1)*self.svgw),width=str(self.svgw),height=str(self.svgw),style=svg_styles[b_val])
+        
+        if len(self.mobs):
+            x,y=self.mobs[selected]
+            xml.SubElement(svg, "circle",cx=str((x+1)*self.svgw+self.svgw/2),cy=str((y+1)*self.svgw+self.svgw/2),r=str(self.svgw/2),style=svg_styles[b_mobsel])
+        
+        return xml.tostring(svg) 
             
     def passing_cell(self,t):
         return t==b_void or t==b_targ
@@ -482,6 +597,7 @@ class defykub:
             self.nbtarg-=1
             self.mobs.pop(j)
             self.nbmob-=1
+            self.vals.append((i,j))
             
     def finished(self):
         return self.nbtarg==0
@@ -529,11 +645,12 @@ class defykub:
 
 
 if __name__ == "__main__":
-    print 'defykub'
+    #print 'defykub'
     defy = defykub()
     defy=get_random_defykub()
     #defy.load_level('test.dfk')
     #defy.from_file('test.xml')
-    defy.print_board()
+    #defy.print_board()
+    print defy.to_string()
         
     

@@ -75,7 +75,7 @@ document.onkeydown=function(e){
  if (e.keyCode==40)
 {post_to_url('/play/',{'action':'down'})}
  if (e.keyCode==38)
-{post_to_url('/play/',{'action':'right'})}
+{post_to_url('/play/',{'action':'up'})}
 
 }
 document.onkeypress=function(e){
@@ -93,29 +93,41 @@ document.onkeypress=function(e){
 <h1> Defykub </h1> 
    <a href="/">Home</a>
    <a href="{{ login }}">{{ login_text }}</a>
-
+<br/>
+Number of actions : {{ nbactions }}
 
 <p>
  {{ game }}
 </p>
-<form name="new" action="/play/?action=new" method="post">
+
+<table border="0" width="400">
+<tr>
+<td><form name="new" action="/play/?action=new" method="post">
 <input type="submit" value="New" />
-</form>
-<form name="reset" action="/play/?action=reset" method="post">
+</form></td>
+<td><form name="reset" action="/play/?action=reset" method="post">
 <input type="submit" value="Reset" />
-</form>
-<form name="left" action="/play/?action=left" method="post">
+</form></td>
+<td><form name="left" action="/play/?action=left" method="post">
 <input type="submit" value="Left" />
-</form>
-<form name="right" action="/play/?action=right" method="post">
+</form></td>
+<td><form name="right" action="/play/?action=right" method="post">
 <input type="submit" value="Right" />
-</form>
-<form name="up" action="/play/?action=up" method="post">
+</form></td>
+<td><form name="up" action="/play/?action=up" method="post">
 <input type="submit" value="Up" />
-</form>
-<form name="right" action="/play/?action=down" method="post">
+</form></td>
+<td><form name="right" action="/play/?action=down" method="post">
 <input type="submit" value="Down" />
-</form>
+</form></td>
+</tr>
+</table>
+
+
+
+
+
+
 
 <p>
  <small>Created by Defykub</small>
