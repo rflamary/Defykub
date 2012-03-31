@@ -9,14 +9,13 @@
     <meta name="generator" content="webgen - http://webgen.rubyforge.org" />
     <link rel="stylesheet" type="text/css" href="{relocatable: default.css}" />
     <title>Defykub / {title: }</title>
-    <script type="text/javascript" src="{relocatable: bibsearch.js}"></script>	
   </head>
   <body>
     <div id="page">
 
         <div id="header">
-		    <div id="headerimg">
-		    <h1><a href="http://defykub.flamary.com/"><img  title="icon" src="{relocatable: /images/icon.png}" alt="todo" width="128" height="128" />Defykub</a></h1>
+		    <div id="headerimg"><img  title="icon" src="{relocatable: /images/icon.png}" alt="todo" width="64" height="64" border="6" align="left" style="border-color:#FFFFFF"/>
+		    <h1><a href="http://defykub.flamary.com/">Defykub</a></h1>
 		    <div class="description">Puzzle game</div>
 	    </div>
 

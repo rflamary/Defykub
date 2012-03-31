@@ -7,8 +7,11 @@ sort_info: 0
 ---
 
 
-Defikub is a puzzle game similar to Ricochet Robots.
+Defikub is a puzzle game similar to Ricochet Robots. The aim is to put mobiles on targets, but once a mobile is moved in a direction, it can only be stopped by another moibile or a wall.
 
-The aim is to move the blue mobiles on targets the. Once a mobile moves in a direction, it can be stopped only by another mobile or a wall. Levels are generated randomly.
+Here is the help screen in the android app:
 
-The green mobile is the selected one and it will move in the direction pressed on the right arrows. In order to change the selected mobile, tap on the "Switch" button on the left.
+<img src="images/tuto.png"  width="800"/>
+
+An android version of the app is available on the <a href="https://play.google.com/store/apps/details?id=com.flamary.defykub" title="Defykub on adroid market">Android market</a> and the source code (with a python pygame version) is available on <a href="https://github.com/flam157/Defykub" title="Defykub source">Github</a>.
+
