@@ -94,8 +94,9 @@ document.onkeypress=function(e){
    <a href="/">Home</a>
    <a href="{{ login }}">{{ login_text }}</a>
 <br/>
-Number of actions : {{ nbactions }}
-
+Number of actions : {{ nbactions }}, Since : {{ timespent }}
+<br/>
+ {{ debug }}
 <p>
  {{ game }}
 </p>

@@ -26,12 +26,15 @@ imglist=['void.png',
          'mobsel.png',
          'arrows.png',
          'menu.png',
-         'won.png']
+         'won.png',
+         'tuto.png']
          
 b_arrows=6
 b_menu=7
 b_won=8
-         
+b_tuto=9   
+
+      
 param_random={'sx':20,
               'sy':20,
               'nbwall':50,
@@ -48,6 +51,8 @@ loop=l_menu
 action_new=pygame.K_g
 action_reset=pygame.K_r
 action_next=pygame.K_SPACE
+
+irand=1
 
 
 def load_images():
@@ -147,9 +152,9 @@ class game():
     def change_loop(self,new):
         self.loop=new
         
-    def generate_new(self):
+    def generate_new(self,irand=0):
         self.sel=0
-        self.defy=get_random_defykub(**param_random) 
+        self.defy=get_random_defykub(seed=irand,**param_random) 
         
     def reset_level(self):
         self.defy=self.defy.defy0
@@ -253,10 +258,28 @@ class game():
             if e.type == pygame.MOUSEBUTTONDOWN: 
                 done=True
         
+    def tuto_loop(self):
+        self.screen.fill((0,0,0))
+        rec=pygame.Rect((0,0),(800,480))
+        self.screen.blit(self.imgs[b_tuto], rec)          
+            #self.tbar.paint()
+        pygame.display.flip()
+        done = False
+        while not done:
+            
+            if android:
+                if android.check_pause():
+                    android.wait_for_resume()
+            e = pygame.event.wait()  
+            
+            if e.type == pygame.MOUSEBUTTONDOWN: 
+                done=True
+
         
     def game_loop(self):
         done = False
         p_new=((9,self.heigth-413-55),(131,55))
+        p_help=((9,self.heigth-345-55),(131,55))
         p_next=((9,self.heigth-173-133),(133,133))
         p_reset=((9,self.heigth-7-133),(133,133))
         def is_inside(pos,rec):
@@ -305,8 +328,11 @@ class game():
                         self.sel=(self.sel+1) % self.defy.nbmob
                     elif is_inside(e.pos,p_reset):
                         self.reset_level()
+                    elif is_inside(e.pos,p_help):
+                        self.tuto_loop()    
                     elif is_inside(e.pos,p_new):
                         self.generate_new()
+
 #                else:
 #                    self.tbar.event(e)
 

@@ -6,8 +6,11 @@ import defykub
 from google.appengine.api import users
 from google.appengine.ext import db
 import datetime
+import logging
 
 svgw=20;
+
+#TODO http://code.google.com/p/channel-tac-toe/source/browse/trunk/chatactoe.py
 
 param_random={'sx':20,
               'sy':20,
@@ -32,6 +35,10 @@ class OptionsDB(db.Model):
     sx = db.IntegerProperty()
     sy = db.IntegerProperty()
     nbactions = db.IntegerProperty() 
+    nbwall = db.IntegerProperty() 
+    nbtarg = db.IntegerProperty() 
+    nbmob = db.IntegerProperty() 
+    svgw = db.IntegerProperty() 
     
 def game_key(game_name=None):
   """Constructs a datastore key for a Guestbook entity with guestbook_name."""
@@ -68,6 +75,9 @@ class Play(webapp2.RequestHandler):
     
     def get(self):
         user = users.get_current_user()
+        
+        debug=""
+
 
         if user:
             
@@ -126,7 +136,8 @@ class Play(webapp2.RequestHandler):
             'login_text': login_text,
             'game': defy.get_svg(game.selected),
             'nbactions': game.nbactions,
-            'timespent': str(datetime.datetime.now()-game.date_start)
+            'timespent': str(datetime.datetime.now()-game.date_start),
+            'debug': debug
             }   
             template = jinja_environment.get_template('play.html')
             self.response.out.write(template.render(template_values))
@@ -136,6 +147,8 @@ class Play(webapp2.RequestHandler):
             
     def post(self):
         user = users.get_current_user()
+        
+        debug=""
 
         if user:
             
@@ -143,7 +156,8 @@ class Play(webapp2.RequestHandler):
             
             game = db.GqlQuery("SELECT * "
                                 "FROM PlayDB "
-                                "WHERE user = :1",user)             
+                                "WHERE user = :1",user)    
+            
             if action == 'new':
                 
                 if game.count():
@@ -167,6 +181,8 @@ class Play(webapp2.RequestHandler):
                 game=game.get()
                 defy=defykub.defykub()
                 defy.from_string(game.game)
+                    
+                logging.info("current game %s", game.game)
                 
                 game.selected=(game.selected+1) % defy.nbmob
                 
@@ -252,7 +268,8 @@ class Play(webapp2.RequestHandler):
             'login_text': login_text,
             'game': defy.get_svg(game.selected),
             'nbactions': game.nbactions,
-            'timespent': str(datetime.datetime.now()-game.date_start)
+            'timespent': str(datetime.datetime.now()-game.date_start),
+            'debug': debug
             }   
             template = jinja_environment.get_template('play.html')
             self.response.out.write(template.render(template_values))

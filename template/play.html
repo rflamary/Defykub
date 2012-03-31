@@ -88,14 +88,22 @@ document.onkeypress=function(e){
 {post_to_url('/play/',{'action':'reset'})}
 }
 </script>
+<script type="text/JavaScript">
+<!--
+function timedRefresh(timeoutPeriod) {
+	setTimeout("location.reload(true);",timeoutPeriod);
+}
+
+</script>
 </head>
-<body>
+<body onload="JavaScript:timedRefresh(5000);">
 <h1> Defykub </h1> 
    <a href="/">Home</a>
    <a href="{{ login }}">{{ login_text }}</a>
 <br/>
 Number of actions : {{ nbactions }}, Since : {{ timespent }}
-
+<br/>
+ {{ debug }}
 <p>
  {{ game }}
 </p>

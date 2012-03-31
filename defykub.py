@@ -6,8 +6,12 @@ Created on Sat Jan 21 15:59:27 2012
 @author: flam
 """
 
+
 #from configobj import ConfigObj
-import xml.etree.ElementTree as xml
+try:
+    import xml.etree.ElementTree as xml
+except ImportError:
+    xml = None    
 import random as rd
 import copy
 from operator import itemgetter, attrgetter
@@ -90,9 +94,9 @@ def get_random_defykub(sx=20,sy=10,nbwall=30,nbtarg=2,nbmob=2,nbactions=20,seed=
                 res.mobs.append((x,y))
                 res.nbmob+=1
             
-            #depth=list()
-            #for i,j in lst:
-            #    depth.append(res.depth_cell_min(i,j,depthmaxsearch))
+#            depth=list()
+#            for i,j in lst:
+#                depth.append(res.depth_cell_min(i,j,depthmaxsearch))
         
         lst=list()
         
@@ -144,33 +148,32 @@ def get_random_defykub(sx=20,sy=10,nbwall=30,nbtarg=2,nbmob=2,nbactions=20,seed=
             
             #print "d:",d
             
+            
+            if True: # if possible direction
             # list possible  spaces for continuing or stop (lst0)
-            lst,lst0=res.list_cells_in_dir(i,j,d)
-            #print "lst:",lst
-            #print "lst0:",lst0
-            
-            
-            
-            
-            # select and move mobile
-            if len(lst):
-                #print "encours"
-                t=rd.randint(0,len(lst)-1)
-                res.mobs[sel]=lst[t]               
-            else:
-                #print "stop"
-                if len(lst0)>1:
-                    t=rd.randint(0,len(lst0)-1)
-                else: 
-                    t=0
-                if len(lst0):
-                    res.mobs[sel]=lst0[t]    
-                    moving[sel]=0
-                    nbmoving-=1
+                lst,lst0=res.list_cells_in_dir(i,j,d)
+                #print "lst:",lst
+                #print "lst0:",lst0
+           
+                # select and move mobile
+                if len(lst):
+                    #print "encours"
+                    t=rd.randint(0,len(lst)-1)
+                    res.mobs[sel]=lst[t]               
+                else:
+                    #print "stop"
+                    if len(lst0)>1:
+                        t=rd.randint(0,len(lst0)-1)
+                    else: 
+                        t=0
+                    if len(lst0):
+                        res.mobs[sel]=lst0[t]    
+                        moving[sel]=0
+                        nbmoving-=1
+                    
+                forbidendir[sel]=dinv
                 
-            forbidendir[sel]=dinv
-            
-            res.cactions.append((sel,dinv))
+                res.cactions.append((sel,dinv))
             
             # check if targets are alone now
             res.update_board()
@@ -195,10 +198,13 @@ def get_random_defykub(sx=20,sy=10,nbwall=30,nbtarg=2,nbmob=2,nbactions=20,seed=
     res.author="Flam's random generator"
     
     gen_walls()
+    #res.print_board()
     gen_targsmobs(nbtarg,nbmob)
+    #res.print_board()
     move_mobs()
     
     res.clean_done()
+    res.update_board()
     rd.shuffle(res.mobs)
     
     res.complexity=len(res.cactions)
@@ -257,6 +263,11 @@ class defykub:
         
         self.board= [[b_void for i in range(self.sy)] for j in range(self.sx)]
         
+        self.mobs=list()
+        self.targs=list()
+        self.walls=list()
+        self.vals=list()
+
         self.nbmob=0
         self.nbtarg=0
         self.nbwall=0
@@ -310,6 +321,11 @@ class defykub:
         self.nbwall=0
         self.nbval=0
         
+        self.mobs=list()
+        self.targs=list()
+        self.walls=list()
+        self.vals=list()        
+        
         for item in level.findall("description/mobs/m"):
             x=item.attrib['x']
             y=item.attrib['y']
@@ -354,15 +370,21 @@ class defykub:
         for i,j in self.targs:
             self.board[i][j]=b_targ     
  
-        
-        for targ in self.targs:
-            isupon=False
-            for mob in self.mobs:
+        for i,j in self.vals:
+            self.board[i][j]=b_val  
+            
+        for i,targ in enumerate(self.targs):
+            for j,mob in enumerate(self.mobs):
+                isupon=False
                 if mob==targ:
                     isupon=True
+                    itemp=i
+                    jtemp=j
+                    
             if isupon:
-                i,j=targ
-                self.board[i][j]=b_val
+                x,y=targ
+                self.board[x][y]=b_val
+
                 
     def to_xml(self,selected=0):
         
@@ -502,12 +524,13 @@ class defykub:
         lst=list()
         lst0=list()      
         # list possible  spaces for continuing or stop (lst0)
-        while self.passing_next_cell(i,j,d):
-            i,j=self.next_cell(i,j,d)
-            if self.potential_start_dir(i,j,d):
-                lst.append((i,j))
-            if self.safe_board(i,j)==b_void:
-                lst0.append((i,j))
+        if d<=3:
+            while self.passing_next_cell(i,j,d):
+                i,j=self.next_cell(i,j,d)
+                if self.potential_start_dir(i,j,d):
+                    lst.append((i,j))
+                if self.safe_board(i,j)==b_void:
+                    lst0.append((i,j))
         return lst,lst0
 
     def potential_start_dir(self,i,j,d):
@@ -539,29 +562,30 @@ class defykub:
         return i,j
         
     def id_from_pos(self,i,j,t):
-        t=-1
+        res=-1
         id=0
         if t==b_targ:
             for x,y in self.targs:
                 if x==i and y==j:
-                    t=id
+                    res=id
                 id+=1
         elif t==b_mob:
             for x,y in self.mobs:
                 if x==i and y==j:
-                    t=id
+                    res=id
                 id+=1
         elif t==b_wall:
             for x,y in self.walls:
                 if x==i and y==j:
-                    t=id
+                    res=id
                 id+=1           
         elif t==b_val:
             for x,y in self.vals:
                 if x==i and y==j:
-                    t=id
-                id+=1                
-        return t        
+                    res=id
+                id+=1
+        #print res
+        return res       
 
             
     def play_action(self,mob,d):
@@ -578,6 +602,7 @@ class defykub:
         if old==b_targ:
             self.mobs.pop(mob)
             itemp =self.id_from_pos(i,j,b_targ)
+            #print len(self.targs)
             self.targs.pop(itemp)
             self.vals.append((i,j))
             self.nbval+=1
@@ -587,23 +612,28 @@ class defykub:
             
     def clean_done(self):
         lst=list()
-        for i,targ in enumerate(self.targs):
+        for i,targ in reversed(list(enumerate(self.targs))):
             for j,mob in enumerate(self.mobs):
                 if targ==mob:
-                    lst.append((i,j))
-        lst.sort(key=itemgetter(1), reverse=True)
-        for i,j in lst:
-            self.targs.pop(i)
+                    self.mobs.pop(j)
+                    self.nbmob-=1   
+                    lst.append(i)
+
+        for i in lst:
+            self.vals.append(self.targs.pop(i))
             self.nbtarg-=1
-            self.mobs.pop(j)
-            self.nbmob-=1
-            self.vals.append((i,j))
+            self.nbval+=1
             
+        lst=list()    
+        for i,targ in enumerate(self.targs):
+            for j,wall in enumerate(self.walls):
+                if targ==wall:
+                    self.walls.pop(j)
+                    self.nbwall-=1                    
+
+           
     def finished(self):
         return self.nbtarg==0
-        
-
-        
         
     def print_board(self,board=None):
         if board==None:
@@ -646,11 +676,31 @@ class defykub:
 
 if __name__ == "__main__":
     #print 'defykub'
+    param_random={'sx':20,
+              'sy':20,
+              'nbwall':50,
+              'nbtarg':3,
+              'nbmob':3,
+              'nbactions':20}  
     defy = defykub()
-    defy=get_random_defykub()
+#    for i in range(100):
+#        seed=i#14
+#        defy=get_random_defykub(seed=seed,**param_random)
+#        if not defy.nbmob==defy.nbtarg:
+#            print i
+    seed=0#14
+    defy=get_random_defykub(seed=seed,**param_random)    
     #defy.load_level('test.dfk')
-    #defy.from_file('test.xml')
-    #defy.print_board()
-    print defy.to_string()
+    defy.print_board()  
+    
+#    defy.play_action(0,d_down)
+#    defy.print_board()  
+#    temp=defy.to_string()
+#    print temp
+#    defy.from_string(temp)
+#    defy.print_board()      
+#    
+    
+    #print defy.to_string()
         
     
