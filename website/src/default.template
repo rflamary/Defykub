@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{lang:}">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="description" content="Defykub, a puzzle game similar to ricochet robots" />
+    <meta name="keywords" content="defykub,game android,python" />
+    <meta name="author" content="Rémi Flamary" />
+    <meta name="generator" content="webgen - http://webgen.rubyforge.org" />
+    <link rel="stylesheet" type="text/css" href="{relocatable: default.css}" />
+    <title>Defykub / {title: }</title>
+    <script type="text/javascript" src="{relocatable: bibsearch.js}"></script>	
+  </head>
+  <body>
+    <div id="page">
+
+        <div id="header">
+		    <div id="headerimg">
+		    <h1><a href="http://defykub.flamary.com/"><img  title="icon" src="{relocatable: /images/icon.png}" alt="todo" width="128" height="128" />Defykub</a></h1>
+		    <div class="description">Puzzle game</div>
+	    </div>
+
+         <!--<h1>{title: }</h1>-->
+        </div>
+
+        <div id="headerbar" class="bar">
+         <!-- <span class="left">Location: </span>-->
+          
+          <div style="clear:both"></div>
+        </div>
+    <hr />
+
+
+    <div id="content">
+	<h2>{title: }</h2><div class="textwidget">
+
+    </div>
+            <webgen:block name="content" />
+	    <webgen:block name='news' notfound="ignore" />
+        </div>
+
+    <div id="sidebar"> 
+           <!-- <h2 class="widgettitle">Language</h2>-->
+        <span class="right">{langbar: }</span>
+
+        <br/>
+        <h2 class="widgettitle">Pages</h2>
+
+              {menu: }
+
+
+        <br/>
+
+        <h2 class="widgettitle">Links</h2>
+        <div class="entry">
+	        <ul >
+
+                <li><a href="https://play.google.com/store/apps/details?id=com.flamary.defykub" title="Defykub on adroid market">Android market</a></li>
+                <li><a href="https://github.com/flam157/Defykub" title="Defykub source">Github Source</a></li>
+
+	        </ul>
+
+        </div>
+        <br/>
+
+        <br/>
+
+
+    </div>
+
+
+
+    </div>
+
+    <div id="footer">
+    <!-- Position: {breadcrumb_trail: } -->
+    </div>
+
+
+
+  </body>
+</html>

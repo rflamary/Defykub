@@ -1,0 +1,14 @@
+---
+title: Home
+in_menu: true
+lang: en
+dir_name: 
+sort_info: 0
+---
+
+
+Defikub is a puzzle game similar to Ricochet Robots.
+
+The aim is to move the blue mobiles on targets the. Once a mobile moves in a direction, it can be stopped only by another mobile or a wall. Levels are generated randomly.
+
+The green mobile is the selected one and it will move in the direction pressed on the right arrows. In order to change the selected mobile, tap on the "Switch" button on the left.

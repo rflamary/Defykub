@@ -1,0 +1,25 @@
+# Configuration file for webgen
+# Used to set the parameters of the plugins
+
+
+
+website.lang: en
+
+tag.langbar.lang_names:
+  en: |
+    <img src="{relocatable: images/gb.png}" alt="En flag"/> English
+  fr: |
+    <img src="{relocatable: images/fr.png}" alt="Fr flag"/> Français
+
+tag.langbar.process_output: true
+tag.langbar.separator: '<br/>'
+tag.breadcrumbtrail.separator: '>'
+
+
+patterns:
+  Copy:
+    add: [**/*.pdf, **/*.json, **/*.zip, **/robots.txt, **/*.svg]
+
+
+
+
